@@ -25,21 +25,24 @@ export default async function RootLayout({
     <html lang="en" className={`${GeistSans.variable}`}>
       <body>
 
-        <div className="flex flex-col items-center gap-2">
-          <p className="text-2xl text-blue-800">
-            {hello ? hello.greeting : "Loading tRPC query..."}
-          </p>
-
-          <div className="flex flex-col items-center justify-center gap-4">
-            <p className="text-center text-2xl text-blue-500">
-              {session && <span>Logged in as {session.user?.name}</span>}
-            </p>
-            <Link
-                href={session ? "/api/auth/signout" : "/api/auth/signin"}
-                className="rounded-full bg-blue-500 px-10 py-3 font-semibold no-underline transition hover:bg-blue-300"
-            >
-              {session ? "Sign out" : "Sign in"}
-            </Link>
+        <div className="hidden h-full flex-1 flex-col space-y-8 p-4 md:flex">
+          <div className="flex items-center justify-between space-y-2">
+            <div>
+              <Link href="/" className="py-3 font-semibold text-2xl no-underline">
+                The Blog
+              </Link>
+            </div>
+            <div className="flex items-center space-x-2">
+              <p className="text-center text-lg text-blue-700">
+                {session && <span>{session.user?.name}</span>}
+              </p>
+              <Link
+                  href={session ? "/api/auth/signout" : "/api/auth/signin"}
+                  className="py-3 font-semibold underline"
+              >
+                {session ? "(Sign out)" : "Sign in"}
+              </Link>
+            </div>
           </div>
         </div>
 
