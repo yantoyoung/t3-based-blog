@@ -3,9 +3,7 @@ import "~/styles/globals.css";
 import { GeistSans } from "geist/font/sans";
 
 import { TRPCReactProvider } from "~/trpc/react";
-import Link from "next/link";
-import { api } from "~/trpc/server";
-import { getServerAuthSession } from "~/server/auth";
+import { SiteHeader } from "~/components/site-header";
 
 export const metadata = {
   title: "T3-based blog",
@@ -13,40 +11,18 @@ export const metadata = {
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const hello = await api.post.hello({ text: "from tRPC" });
-  const session = await getServerAuthSession();
-
   return (
     <html lang="en" className={`${GeistSans.variable}`}>
       <body>
-
-        <div className="hidden h-full flex-1 flex-col space-y-8 p-4 md:flex">
-          <div className="flex items-center justify-between space-y-2">
-            <div>
-              <Link href="/" className="py-3 font-semibold text-2xl no-underline">
-                The Blog
-              </Link>
-            </div>
-            <div className="flex items-center space-x-2">
-              <p className="text-center text-lg text-blue-700">
-                {session && <span>{session.user?.name}</span>}
-              </p>
-              <Link
-                  href={session ? "/api/auth/signout" : "/api/auth/signin"}
-                  className="py-3 font-semibold underline"
-              >
-                {session ? "(Sign out)" : "Sign in"}
-              </Link>
-            </div>
-          </div>
+        <div className="relative flex minh-dvh flex-col bg-background">
+          <SiteHeader />
+          <TRPCReactProvider>{children}</TRPCReactProvider>
         </div>
-
-        <TRPCReactProvider>{children}</TRPCReactProvider>
       </body>
     </html>
   );
