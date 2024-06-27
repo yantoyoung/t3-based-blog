@@ -1,8 +1,6 @@
-import Link from "next/link";
-
-import { CreatePost } from "~/app/_components/create-post";
 import { getServerAuthSession } from "~/server/auth";
 import { api } from "~/trpc/server";
+import { PostItem } from "~/components/post-item";
 
 export default async function Home() {
   const session = await getServerAuthSession();
@@ -16,27 +14,38 @@ export default async function Home() {
           </h1>
         </div>
       </div>
+      {session?.user && <ShowRecentPosts />}
     </div>
   );
 }
 
-async function CrudShowcase() {
 async function ShowRecentPosts() {
-  const session = await getServerAuthSession();
-  if (!session?.user) {
-    return (
-      <h1>Welcome. Please sign in.</h1>
-    );
-  }
-
   const recentPosts = await api.post.getRecent();
 
   return (
-    <div>
-      {recentPosts?.map((post, i) => (
-          <div key={i}>{post.title}</div>
-        ))
-      }
+    <div className="grid grid-cols-12 gap-3 mt-8">
+      <div className="col-span-12 col-start-1 sm:col-span-8">
+        <hr />
+        {recentPosts?.length > 0 ? (
+          <ul className="flex flex-col">
+            {recentPosts.map((post) => {
+              const { id, title, content, createdAt } = post;
+              return (
+                <li key={id}>
+                  <PostItem
+                    id={id}
+                    title={title}
+                    content={content}
+                    date={createdAt}
+                  />
+                </li>
+              )
+            })}
+          </ul>
+        ) : (
+          <p>No posts.</p>
+        )}
+      </div>
     </div>
   );
 }
