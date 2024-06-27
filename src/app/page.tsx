@@ -5,31 +5,38 @@ import { getServerAuthSession } from "~/server/auth";
 import { api } from "~/trpc/server";
 
 export default async function Home() {
+  const session = await getServerAuthSession();
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
-      <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
-        <CrudShowcase />
+    <div className="container max-w-4xl py-6 lg:py-10">
+      <div className="flex flex-col items-start gap-4 md:flex-row md:justify-between md:gap-8">
+        <div className="flex-1 space-y-4">
+          <h1 className="inline-block font-black text-3xl lg:text-3xl">
+            {session ? "Latest Posts" : "Welcome. Please sign in."}
+          </h1>
+        </div>
       </div>
-    </main>
+    </div>
   );
 }
 
 async function CrudShowcase() {
+async function ShowRecentPosts() {
   const session = await getServerAuthSession();
-  if (!session?.user) return null;
+  if (!session?.user) {
+    return (
+      <h1>Welcome. Please sign in.</h1>
+    );
+  }
 
-  const latestPost = await api.post.getLatest();
+  const recentPosts = await api.post.getRecent();
 
   return (
-    <div className="w-full max-w-xs">
-      {latestPost ? (
-        <p className="truncate">Your most recent post: {latestPost.title}</p>
-      ) : (
-        <p>You have no posts yet.</p>
-      )}
-
-      <CreatePost />
+    <div>
+      {recentPosts?.map((post, i) => (
+          <div key={i}>{post.title}</div>
+        ))
+      }
     </div>
   );
 }
