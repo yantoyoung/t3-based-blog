@@ -2,8 +2,15 @@ import { getServerAuthSession } from "~/server/auth";
 import { api } from "~/trpc/server";
 import { PostItem } from "~/components/post-item";
 import { CreatePostDialog } from "~/components/create-post-dialog";
+import { BlogsPagination } from "~/components/blogs-pagination";
 
-export default async function Home() {
+interface BlogListProps {
+  searchParams: {
+    page?: string;
+  }
+}
+
+export default async function Home({ searchParams }: BlogListProps) {
   const session = await getServerAuthSession();
 
   return (
@@ -15,13 +22,17 @@ export default async function Home() {
           </h1>
         </div>
       </div>
-      {session?.user && <ShowRecentPosts />}
+      {session?.user && <ShowRecentPosts searchParams={searchParams} />}
     </div>
   );
 }
 
-async function ShowRecentPosts() {
-  const recentPosts = await api.post.getRecent();
+async function ShowRecentPosts({ searchParams }: BlogListProps) {
+  const currentPage = Number(searchParams?.page) || 1;
+  const recentPosts = await api.post.getRecent({currentPage});
+
+  const blogCount = await api.post.getBlogCount();
+  const totalPages = Math.ceil(blogCount / 10);
 
   return (
     <div className="grid grid-cols-12 gap-3 mt-8">
@@ -46,6 +57,7 @@ async function ShowRecentPosts() {
         ) : (
           <p>No posts.</p>
         )}
+        <BlogsPagination totalPages={totalPages}></BlogsPagination>
       </div>
       <div className="col-span-12 row-start-3 h-fit sm:col-span-4 sm:col-start-9 sm:row-start-1 border-none">
         <div className="flex flex-col gap-2 py-2">

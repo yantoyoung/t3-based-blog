@@ -38,12 +38,19 @@ export const postRouter = createTRPCRouter({
     });
   }),
 
-  getRecent: protectedProcedure.query(({ ctx }) => {
-    return ctx.db.post.findMany({
-      take: 10,
-      orderBy: { createdAt: "desc" },
-      where: { createdBy: { id: ctx.session.user.id } },
-    })
+  getRecent: protectedProcedure
+    .input(z.object({ currentPage: z.number() }))
+    .query(({ ctx, input }) => {
+      return ctx.db.post.findMany({
+        skip: (input.currentPage - 1) * 10,
+        take: 10,
+        orderBy: { createdAt: "desc" },
+        where: { createdBy: { id: ctx.session.user.id } },
+      })
+    }),
+
+  getBlogCount: protectedProcedure.query(({ctx}) => {
+    return ctx.db.post.count({});
   }),
 
   getSecretMessage: protectedProcedure.query(() => {
