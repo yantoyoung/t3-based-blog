@@ -11,18 +11,16 @@ interface BlogListProps {
 }
 
 export default async function Home({ searchParams }: BlogListProps) {
-  const session = await getServerAuthSession();
-
   return (
     <div className="container max-w-4xl py-6 lg:py-10">
       <div className="flex flex-col items-start gap-4 md:flex-row md:justify-between md:gap-8">
         <div className="flex-1 space-y-4">
           <h1 className="inline-block font-black text-3xl lg:text-3xl">
-            {session ? "Latest Posts" : "Welcome. Please sign in."}
+            Latest Posts
           </h1>
         </div>
       </div>
-      {session?.user && <ShowRecentPosts searchParams={searchParams} />}
+      <ShowRecentPosts searchParams={searchParams} />
     </div>
   );
 }

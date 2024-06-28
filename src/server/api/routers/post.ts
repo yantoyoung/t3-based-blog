@@ -15,7 +15,7 @@ export const postRouter = createTRPCRouter({
       };
     }),
 
-  create: protectedProcedure
+  create: publicProcedure
     .input(z.object({ title: z.string().min(1) }))
     .input(z.object({ content: z.string().min(1) }))
     .mutation(async ({ ctx, input }) => {
@@ -25,31 +25,28 @@ export const postRouter = createTRPCRouter({
       return ctx.db.post.create({
         data: {
           title: input.title,
-          content: input.content,
-          createdBy: { connect: { id: ctx.session.user.id } },
+          content: input.content
         },
       });
     }),
 
   getLatest: protectedProcedure.query(({ ctx }) => {
     return ctx.db.post.findFirst({
-      orderBy: { createdAt: "desc" },
-      where: { createdBy: { id: ctx.session.user.id } },
+      orderBy: { createdAt: "desc" }
     });
   }),
 
-  getRecent: protectedProcedure
+  getRecent: publicProcedure
     .input(z.object({ currentPage: z.number() }))
     .query(({ ctx, input }) => {
       return ctx.db.post.findMany({
         skip: (input.currentPage - 1) * 10,
         take: 10,
-        orderBy: { createdAt: "desc" },
-        where: { createdBy: { id: ctx.session.user.id } },
+        orderBy: { createdAt: "desc" }
       })
     }),
 
-  getBlogCount: protectedProcedure.query(({ctx}) => {
+  getBlogCount: publicProcedure.query(({ctx}) => {
     return ctx.db.post.count({});
   }),
 
