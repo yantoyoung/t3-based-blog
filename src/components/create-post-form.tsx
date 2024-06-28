@@ -15,14 +15,19 @@ import { Button } from "~/components/ui/button";
 import { Textarea } from "~/components/ui/textarea";
 import { useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
+
+interface DialogStateProps {
+  open: boolean
+  setOpen: Dispatch<SetStateAction<boolean>>
+}
 
 const formSchema = z.object({
   title: z.string().min(1, { message: "Title cannot be empty." }),
   content: z.string().min(1, { message: "Content cannot be empty." })
 });
 
-export function BlogPostForm() {
+export function BlogPostForm(props: DialogStateProps) {
   const router = useRouter();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -32,6 +37,7 @@ export function BlogPostForm() {
       router.refresh();
       setTitle("");
       setContent("");
+      props.setOpen(false);
     },
   });
 

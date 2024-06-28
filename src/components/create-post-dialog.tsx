@@ -1,3 +1,6 @@
+"use client"
+
+import React from "react";
 import {
   Dialog,
   DialogContent,
@@ -9,8 +12,10 @@ import { Button } from "~/components/ui/button";
 import { BlogPostForm } from "~/components/create-post-form";
 
 export function CreatePostDialog() {
+  const [open, setOpen] = React.useState(false);
+
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button>Create Post</Button>
       </DialogTrigger>
@@ -18,7 +23,7 @@ export function CreatePostDialog() {
         <DialogHeader>
           <DialogTitle>Create New Blog Post</DialogTitle>
         </DialogHeader>
-        <BlogPostForm />
+        <BlogPostForm setOpen={setOpen} open={open} />
       </DialogContent>
     </Dialog>
   )
