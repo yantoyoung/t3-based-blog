@@ -6,6 +6,7 @@ import {
   DialogTrigger
 } from "~/components/ui/dialog";
 import { Button } from "~/components/ui/button";
+import { BlogPostForm } from "~/components/create-post-form";
 
 export function CreatePostDialog() {
   return (
@@ -17,6 +18,7 @@ export function CreatePostDialog() {
         <DialogHeader>
           <DialogTitle>Create New Blog Post</DialogTitle>
         </DialogHeader>
+        <BlogPostForm />
       </DialogContent>
     </Dialog>
   )
